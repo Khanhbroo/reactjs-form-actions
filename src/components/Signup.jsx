@@ -1,8 +1,49 @@
+import {
+  isEmail,
+  isNotEmpty,
+  isEqualToOtherValue,
+  hasMinLength,
+} from "../util/validation";
+
 export default function Signup() {
   const signupAction = (formData) => {
     const userData = Object.fromEntries(formData.entries());
     const acquisition = formData.getAll("acquisition");
     userData.acquisition = acquisition;
+
+    let errors = [];
+
+    if (!isEmail(userData.email)) {
+      errors.push("Invalid email address.");
+    }
+
+    if (!isNotEmpty(userData.password) || !hasMinLength(userData.password, 6)) {
+      errors.push("You must provide a password with at least six characters.");
+    }
+
+    if (!isEqualToOtherValue(userData.password, userData["confirm-password"])) {
+      errors.push("Password do not match.");
+    }
+
+    if (
+      !isNotEmpty(userData["first-name"]) ||
+      !isNotEmpty(userData["last-name"])
+    ) {
+      errors.push("Please provide both your first and last name.");
+    }
+
+    if (!isNotEmpty(userData.role)) {
+      errors.push("Please select a role.");
+    }
+
+    if (!userData.term) {
+      errors.push("You must agree to the terms and conditions.");
+    }
+
+    if (userData.acquisition.length === 0) {
+      errors.push("Please select at least 1 acquisition channel.");
+    }
+
     console.log(userData);
   };
 
